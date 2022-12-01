@@ -53,8 +53,9 @@ def test_status_code200():
     """ Тест, проверяющий что код ответа сервера равен 200 """
 
     check_status_code(code=200, message='OK - Binary tile successfully retrieved')
-    check_tag_in_headers('etag', 'expires', 'content-encoding', 'content-encoding')
+    check_tag_in_headers('etag', 'expires', 'last-modified', 'content-encoding', 'content-encoding')
     check_tag_in_header_equal_param('content-type', 'application/x-protobuf')
+    check_tag_in_header_equal_param('content-encoding', 'br')
 
 
 def test_status_code204():
