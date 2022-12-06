@@ -1,13 +1,13 @@
 from locust import HttpUser, task, between
-from VectorTile.consts import LAYER, X, Y, Z
+import SphinxsearchGeocoder.consts as consts
 
 
 class QuickstartUser(HttpUser):
     wait_time = between(1, 2)
 
     @task
-    def Vector_Tile_API(self):
-        self.client.get(f'/api/tiles/{LAYER}/{Z}/{X}/{Y}.pbf')
+    def Geocoder_V2_API(self):
+        self.client.get(consts.METRICS_URL)
 
     def on_start(self):
         self.client.get('/')
