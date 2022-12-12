@@ -2,7 +2,6 @@ import requests
 import VectorTile.consts as consts
 import resp_body_consts as rbc
 import check_functions as chk
-from random import randint
 from time import sleep
 
 resp = requests.get(consts.URL)  # GET-запрос на сервер
@@ -160,28 +159,40 @@ def test_correct_params_in_link():
     assert consts.Y.isdigit(), 'Y is not digit'
     assert 0 <= int(consts.Y) <= 2 ** (int(consts.Z) - 1), 'Y not in the interval from 0-2^z-1'
 
-def test_resp_on_all_zoom_levels():
-    """ Тест, проверяющий ответ сервера на всех уровнях зума (0-17) """
+def test_resp_ozbasemap_on_all_zoom_levels():
+    """ Тест, проверяющий ответ сервера с параметром ozbasemap на всех уровнях зума """
 
-    layer = 'ozbasemap'
-
-    for z in range(18):
-        x = randint(0, int(2 ** (z - 1)))
-        y = randint(0, int(2 ** (z - 1)))
-        
-        r = requests.get(f'https://maps.starline.ru/api/tiles/{layer}/{z}/{x}/{y}.pbf')
+    for uri in consts.URIS_FOR_OZBASEMAP:
+        r = requests.get(f'https://maps.starline.ru/api/tiles/{uri}')
 
         # with open(file='resp.txt', mode='a', encoding='UTF-8') as ff:
-        #     ff.write(f'https://maps.starline.ru/api/tiles/{layer}/{z}/{x}/{y}.pbf')
+        #     ff.write(f'https://maps.starline.ru/api/tiles/{uri}')
 
         # Проверка, что статус ответа сервера равен 200
         chk.check_status_code(resp=r, code=200, message='OK - Binary tile successfully retrieved')
 
         # Проверка, что в заголовках ответа сервера содержатся заголовки
-        chk.check_tag_in_headers(resp=r, tags=('etag', 'expires', 'last-modified', 'content-encoding',))
+        # chk.check_tag_in_headers(resp=r, tags=('etag', 'expires', 'last-modified', 'content-encoding',))
 
         # Проверка, что определённые заголовки ответа сервера равны определённым значениям
         chk.check_tag_in_header_equal_param(resp=r, tag_name='content-type', tag_value='application/x-protobuf')
-        chk.check_tag_in_header_equal_param(resp=r, tag_name='content-encoding', tag_value='br')
+        # chk.check_tag_in_header_equal_param(resp=r, tag_name='content-encoding', tag_value='br')
 
-        sleep(.1)
+def test_resp_poi_on_all_zoom_levels():
+    """ Тест, проверяющий ответ сервера с параметром poi на всех уровнях зума """
+
+    for uri in consts.URIS_FOR_POI:
+        r = requests.get(f'https://maps.starline.ru/api/tiles/{uri}')
+
+        # with open(file='resp.txt', mode='a', encoding='UTF-8') as ff:
+        #     ff.write(f'https://maps.starline.ru/api/tiles/{uri}')
+
+        # Проверка, что статус ответа сервера равен 200
+        chk.check_status_code(resp=r, code=200, message='OK - Binary tile successfully retrieved')
+
+        # Проверка, что в заголовках ответа сервера содержатся заголовки
+        # chk.check_tag_in_headers(resp=r, tags=('etag', 'expires', 'last-modified', 'content-encoding',))
+
+        # Проверка, что определённые заголовки ответа сервера равны определённым значениям
+        chk.check_tag_in_header_equal_param(resp=r, tag_name='content-type', tag_value='application/x-protobuf')
+        # chk.check_tag_in_header_equal_param(resp=r, tag_name='content-encoding', tag_value='br')
